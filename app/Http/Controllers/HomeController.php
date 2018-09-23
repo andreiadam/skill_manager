@@ -37,16 +37,27 @@ class HomeController extends Controller
 
     public function store(Request $request)
     {
-        $new_user = new User;
-        $new_user->first_name = $request->first_name;
-        $new_user->last_name = $request->last_name;
-        $new_user->email = $request->email;
-        $new_user->password = Hash::make($request->password);
-        $new_user->save();
+        $this->validate($request,[
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|between:5,20',
+        ],[
+            'first_name.required' => 'Please enter a Name',
+            'last_name.required' => 'Please enter your Lastname',
+            'email.email' => 'Invalid E-mail',
+            'email.required' => 'Please enter your e-mail',
+        ]);
+        $user = new User;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
 
 
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('status', 'Successfully create Users '.$user->first_name);
     }
 
     public function edit($id)
@@ -58,6 +69,18 @@ class HomeController extends Controller
 
     public function update(Request $request, $id)
     {
+        $this->validate($request,[
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'password' => 'nullable|between:5,20',
+        ],[
+            'first_name.required' => 'Please enter a Name',
+            'last_name.required' => 'Please enter your Lastname',
+            'email.email' => 'Invalid E-mail',
+            'email.required' => 'Please enter your e-mail',
+        ]);
+
         $user = User::find($id);
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
@@ -67,7 +90,7 @@ class HomeController extends Controller
         }
         $user->save();
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('status', 'Successfully updated User '.$user->first_name);
     }
 
     public function delete($id)
@@ -75,6 +98,6 @@ class HomeController extends Controller
         $user = User::find($id);
         $user->delete();
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('status', 'Successfully deleted User '.$user->first_name);
     }
 }
