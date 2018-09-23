@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AvailableSkill;
 use App\User;
 use App\UserSkill;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use phpDocumentor\Reflection\DocBlock\Tags\Uses;
@@ -40,7 +41,7 @@ class HomeController extends Controller
         return view('users.create')
             ->with('availableSkills', $availableSkills)
             ->with('isEdit', false)
-            ->with('userskills',[]);
+            ->with('userskills', []);
     }
 
     public function store(Request $request)
@@ -138,15 +139,35 @@ class HomeController extends Controller
 
     public function details($id)
     {
-        $user = User::with(['skills', 'skills.aSkill'])->find($id);
+        $user = User::find($id);
+        $allSkills = UserSkill::with('aSkill')
+            ->where('user_id', $id)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->toArray();
 
-        return view('users.details')->with('user', $user);
+        $labels = [];
+        $sheets = [];
+
+        foreach ($allSkills as $skill) {
+
+            $labels[] = Carbon::parse($skill['created_at'])->format('Y M d');
+            $key = $skill['a_skill']['skill_name'];
+
+            $sheets[$key]['data'][] = $skill['level'];
+            $sheets[$key]['label'] = $key;
+            $sheets[$key]['borderColor'] = "red";
+            $sheets[$key]['backgroundColor'] = "transparent";
+        }
+
+        $labels = array_values(array_unique($labels));
+        $sheets = array_values($sheets);
+
+
+        return view('users.details')
+            ->with('user', $user)
+            ->with('labels', $labels)
+            ->with('sheets', $sheets);
     }
 
 }
-
-// User with later skills
-
-//$user = User::find($id)->toArray();
-//
-//$user['skills'] = User::getLastSkills($id);

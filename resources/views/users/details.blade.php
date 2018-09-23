@@ -31,9 +31,12 @@
                                 </div>
                             </div>
 
-                        <pre>
-                            {{json_encode($user, JSON_PRETTY_PRINT) }}
-                        </pre>
+                        <div>
+                            @include('inc.chart')
+                        </div>
+                        {{--<pre>--}}
+                            {{--{{json_encode($user, JSON_PRETTY_PRINT) }}--}}
+                        {{--</pre>--}}
 
                     </div>
 
