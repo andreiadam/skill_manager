@@ -30,9 +30,12 @@
                                 </div>
                             </div>
 
+                            @include('inc.addskills')
+
                             <div class="text-center">
                                 <button type="submit" class="btn btn-success">Create</button>
                             </div>
+
                         </form>
 
                     </div>

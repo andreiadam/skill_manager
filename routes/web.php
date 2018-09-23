@@ -29,3 +29,6 @@ Route::post('/update/{id}', 'HomeController@update')->name('update');
 Route::get('/delete/{id}', 'HomeController@delete')->name('delete');
 
 
+Route::get('/details/{id}', 'HomeController@details')->name('details');
+
+

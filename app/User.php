@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name','last_name', 'email', 'password',
+        'first_name', 'last_name', 'email', 'password',
     ];
 
     /**
@@ -27,4 +27,20 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function skills()
+    {
+        return $this->hasMany(UserSkill::class, 'user_id', 'id');
+    }
+
+    public static function getLastSkills($id)
+    {
+        return UserSkill::with('aSkill')
+            ->where('user_id', $id)
+            ->latest()
+            ->get()
+            ->unique('skill_id')
+            ->toArray();
+    }
+
 }
